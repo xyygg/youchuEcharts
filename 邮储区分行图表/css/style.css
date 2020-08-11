@@ -7,8 +7,7 @@ i,b,em{font-style: normal;}
 body {-webkit-font-feature-settings: 'kern'1;-moz-font-feature-settings: 'kern'1;-o-font-feature-settings: 'kern'1;text-rendering: geometricPrecision;font-family: "Microsoft YaHei";}
 a:active,a:hover {outline: 0}
 
-img {display: inline-block;border: none;vertical-align: middle;
-}
+img {display: inline-block;border: none;vertical-align: middle;pointer:none}
 li {list-style: none;}
 table {border-collapse: collapse;border-spacing: 0;}
 h1,h2,h3 {font-size: 14px;font-weight: 400;}
