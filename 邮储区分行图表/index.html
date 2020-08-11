@@ -1,0 +1,1041 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="apple-touch-fullscreen" content="no" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+		<title>数据统计</title>
+		<link rel="stylesheet" href="css/vant.css"/>
+		<link rel="stylesheet" href="css/style.css"/>
+		
+	</head>
+	<body>
+		<!-- 加载动画  -->
+		<div id="app">
+			<div class="loaders">
+				<div class="loader">
+					<div class="loader-inner ball-spin-fade-loader">
+						<div></div>
+						<div></div>
+						<div></div>
+						<div></div>
+						<div></div>
+						<div></div>
+						<div></div>
+						<div></div>
+					</div>
+				</div>
+			</div>
+			<!-- 加载动画 结束 -->
+		</div>
+	</body>
+	<script src="js/vue.min.js" type="text/javascript" charset="utf-8"></script>
+	<script src="js/vant.js" type="text/javascript" charset="utf-8"></script>
+	<script src="js/echarts.min.js" type="text/javascript" charset="utf-8"></script>
+	<script src="js/bmap.min.js" type="text/javascript" charset="utf-8"></script>
+	<script src="js/henan.js" type="text/javascript" charset="utf-8"></script>
+	<script src="js/zepto.min.js" type="text/javascript" charset="utf-8"></script>
+	<script type="text/x-template" id="temp">
+		<div class="container">
+			<div class="selectType">
+				<div class="selectL" >
+					<span @click="selectType">{{typeTxt}}</span>
+				</div>
+				<div class="selectR">
+					<span :class="{actspan:int==0}" @click="selectNav(0)">规模</span>
+					<span :class="{actspan:int==1}" @click="selectNav(1)">效率</span>
+					<span :class="{actspan:int==2}" @click="selectNav(2)">排行</span>
+				</div>
+			</div>
+			<div class="content" v-if="int1">
+				<div class="conMain">
+					<div class="conTitle">
+						<span class="toptitle">
+							<i v-if="selecType==true">会员地区分布</i>
+							<i v-else>当天新增会员地区分布</i></span>
+						<span class="bomtitle">
+							<i v-if="selecType==true">累计实时</i>
+							<i v-else>当天实时</i>
+						</span>
+					</div>
+					<div id="main1" class="mains main1"></div>
+				</div>
+				<div class="conMain">
+					<div class="conTitle">
+						<span class="toptitle">
+							<i v-if="selecType==true">会员规模</i>
+							<i v-else>当天会员规模</i></span>
+						<span class="bomtitle">
+							<i v-if="selecType==true">累计实时</i>
+							<i v-else>当天实时</i>
+						</span>
+					</div>
+					<div id="main2" class="mains main2"></div>
+				</div>
+				<div class="conMain">
+					<div class="conTitle">
+						<span class="toptitle">
+							<i v-if="selecType==true">会员结构</i>
+							<i v-else>当天会员结构</i></span>
+						<span class="bomtitle">
+							<i v-if="selecType==true">累计实时</i>
+							<i v-else>当天实时</i>
+						</span>
+					</div>
+					<div id="main3" class="mains main3"></div>
+				</div>
+			</div>
+			<div class="content" v-if="int2">
+				<div class="conMain">
+					<div class="conTitle">
+						<span class="toptitle">
+							<i v-if="selecType==true">全区YOU生活目标完成情况</i>
+							<i v-else>当天全区YOU生活目标完成情况</i></span>
+						<span class="bomtitle">
+							<i v-if="selecType==true">累计实时</i>
+							<i v-else>当天实时</i>
+						</span>
+					</div>
+					<div id="main4" class="mains main4"></div>
+				</div>
+				<div class="conMain">
+					<div class="conTitle">
+						<span class="toptitle">
+							<i v-if="selecType==true">分行YOU生活目标完成情况</i>
+							<i v-else>当天分行YOU生活目标完成情况</i></span>
+						<span class="bomtitle">
+							<i v-if="selecType==true">累计实时</i>
+							<i v-else>当天实时</i>
+						</span>
+					</div>
+					<div id="main5" class="mains main5"></div>
+				</div>
+				<div class="conMain">
+					<div class="conTitle">
+						<span class="toptitle">
+							<i v-if="selecType==true">网点参与情况</i>
+							<i v-else>当天网点参与情况</i></span>
+						<span class="bomtitle">
+							<i v-if="selecType==true">累计实时</i>
+							<i v-else>当天实时</i>
+						</span>
+					</div>
+					<div id="main6" class="mains main6"></div>
+				</div>
+				<div class="conMain">
+					<div class="conTitle">
+						<span class="toptitle">
+							<i v-if="selecType==true">营销人员参与情况</i>
+							<i v-else>当天营销人员参与情况</i></span>
+						<span class="bomtitle">
+							<i v-if="selecType==true">累计实时</i>
+							<i v-else>当天实时</i>
+						</span>
+					</div>
+					<div id="main7" class="mains main7"></div>
+				</div>
+			</div>
+			<div class="content" v-if="int3">
+				<div class="conMain">
+					<div class="conTitle">
+						<span class="toptitle">
+							<i v-if="selecType==true">营销20强网点分行占比</i>
+							<i v-else>当天营销20强网点分行占比</i></span>
+						<span class="bomtitle">
+							<i v-if="selecType==true">累计实时</i>
+							<i v-else>当天实时</i>
+						</span>
+					</div>
+					<div id="main8" class="mains main8"></div>
+				</div>
+				<div class="conMain">
+					<div class="conTitle">
+						<span class="toptitle">
+							<i v-if="selecType==true">营销20强</i>
+							<i v-else>当天营销20强网点</i></span>
+						<span class="bomtitle">
+							<i v-if="selecType==true">累计实时</i>
+							<i v-else>当天实时</i>
+						</span>
+					</div>
+					<div id="main9" class="mains main9"></div>
+				</div>
+				<div class="conMain">
+					<div class="conTitle">
+						<span class="toptitle">
+							<i v-if="selecType==true">各单位前三强营销人员</i>
+							<i v-else>当天各单位前三强营销人员</i></span>
+						<span class="bomtitle">
+							<i v-if="selecType==true">累计实时</i>
+							<i v-else>当天实时</i>
+						</span>
+					</div>
+					<div id="main10" class="mains main10"></div>
+				</div>
+			</div>
+		</div>
+		
+	</script>
+	<script>
+		var vm = new Vue({
+				el: '#app',
+				template: "#temp",
+				data: {
+					selecType:true,//默认累计，false为当天
+					typeTxt:"切换当天",
+					int:0,
+					int1:true,
+					int2:false,
+					int3:false
+				},
+				mounted() {
+					this.$nextTick(function(){
+						this.init01()//默认第一个
+					})
+				},
+				methods:{
+					selectType(){
+						if(this.selecType!=false){
+							this.selecType=false
+							this.typeTxt="切换累计"
+							
+						}else{
+							this.selecType=true
+							this.typeTxt="切换当天"
+						}
+						
+					},
+					selectNav:function(num){
+						this.int=num
+						this.$toast.loading({
+						  message: '加载中...',
+						  forbidClick: true,
+						  loadingType: 'spinner'
+						});
+						if(num==0){//规模
+							this.init01()
+						}
+						if(num==1){//效率
+							this.init02()
+							
+						}
+						if(num==2){// 排行
+							this.init03()
+						}
+					},
+					init01:function(){//规模
+						this.int=0
+						this.int1=true
+						this.int2=false
+						this.int3=false
+						this.$nextTick(() => {
+						  this.echart01()//会员地区分布
+						  this.echart02()//会员规模
+						  this.echart03()//会员结构
+						  window.addEventListener('resize',this.resize1);
+						});
+					},
+					init02:function(){//效率
+						this.int=1
+						this.int1=false
+						this.int2=true
+						this.int3=false
+						this.$nextTick(() => {
+						  this.echart04()//全区YOU生活目标
+						  this.echart05()//分行YOU生活目标
+						  this.echart06()//网店参与情况
+						  this.echart07()//营销人员参与情况
+						  window.addEventListener('resize',this.resize2);
+						});
+					},
+					init03:function(){// 排行
+						this.int=2
+						this.int1=false
+						this.int2=false
+						this.int3=true
+						this.$nextTick(() => {
+						  this.echart08()//营业20强网点分行占比
+						  this.echart09()//营销20强网点
+						  this.echart10()//各单位前三强营销人员
+						  window.addEventListener('resize',this.resize3);
+						});
+					},
+					resize1: function() {
+						this.myChart01.resize();
+						this.myChart02.resize();
+						this.myChart03.resize();
+					},
+					resize2: function() {
+						this.myChart04.resize();
+						this.myChart05.resize();
+						this.myChart06.resize();
+						this.myChart07.resize();
+					},
+					resize3: function() {
+						this.myChart08.resize();
+						this.myChart09.resize();
+						this.myChart10.resize();
+					},
+					echart01(){//地域分布
+						var dom = document.getElementById('main1');
+						this.myChart01 = echarts.init(dom);
+						var app = {};
+						option = null;
+						option = {
+							legend: {
+							    orient: 'horizontal',                
+							    x: 'center',                
+							    y: 'top',  
+							},
+						    tooltip: {
+						       trigger: 'item',
+						       formatter: '{b}-会员总量<br/>{c}',
+						        backgroundColor:"rgba(0,0,0,0.6)",//提示标签背景颜色
+						        textStyle:{color:"#fff"} //提示标签字体颜色
+						    },
+							grid: {
+							    left: '0%',
+							    right: '4%',
+							    bottom: '0%',
+							    containLabel: true,
+								width:"auto", //图例宽度
+								height:"95%", //图例高度
+							},
+							visualMap: {
+								min: 10,
+								max: 500,
+								text:['高','低'],
+								realtime: false,
+								textStyle:{color:"#999"},
+								calculable: false,
+								inverse:false,
+								itemWidth:8,
+								itemHeight:90,
+								left:0,
+								bottom:20,
+								orient:'vertical',
+								inRange: {
+									color: ['#225a7c', '#2f859f',"#47d9e3"],
+									
+								}
+							},
+						    series: [{
+						        type: 'map',
+						        mapType: '河南',
+								top:'10%',
+								zoom: 1.15,   //这里是关键，一定要放在 series中
+						        label: {
+						            normal: {
+						                show: true,//显示省份标签
+						                textStyle:{color:"#fff",fontSize:10,},//省份标签字体颜色
+						            },    
+						            emphasis: {//对应的鼠标悬浮效果
+						                show: true,
+						                textStyle:{color:"#fff"}
+						            } 
+						        },
+						        itemStyle: {
+						            normal: {
+						                borderWidth: .5,//区域边框宽度
+						                borderColor: '#009fe8',//区域边框颜色
+						                areaColor:"#ffefd5",//区域颜色
+						            },
+						            emphasis: {
+						                borderWidth: .3,
+						                borderColor: '#fff',
+						                areaColor:"#3599af",
+						                
+						            }
+						        },
+						        data:[//城市名称必须跟一下名称对应一致,顺序随意
+						            {name:'郑州市', value:30},
+									{name:'开封市', value:400},
+									{name:'洛阳市', value:50},
+									{name:'平顶山市', value:50},
+									{name:'安阳市', value:50},
+									{name:'鹤壁市', value:50},
+									{name:'新乡市', value:50},
+									{name:'焦作市', value:50},
+									{name:'濮阳市', value:50},
+									{name:'许昌市', value:50},
+									{name:'漯河市', value:50},
+									{name:'三门峡市', value:50},
+									{name:'南阳市', value:50},
+									{name:'商丘市', value:50},
+									{name:'信阳市', value:50},
+									{name:'周口市', value:50},
+									{name:'济源市', value:50},
+									{name:'驻马店市', value:50}
+						        ],
+						    }],
+						};          
+						if (option && typeof option === "object") {
+						    this.myChart01.setOption(option, true);
+						}
+					},
+					echart02(){//规模分布
+						var dom = document.getElementById('main2');
+						this.myChart02 = echarts.init(dom);
+						var app = {};
+						option = null;
+						option = {
+						    tooltip: {
+						        trigger: 'axis',
+						        axisPointer: {            // 坐标轴指示器，坐标轴触发有效
+						            type: 'shadow'        // 默认为直线，可选为：'line' | 'shadow'
+						        }
+						    },
+						    legend: {
+						        data: ['体验会员', '正式会员']
+						    },
+						    grid: {
+						        left: '1',
+						        right: '4%',
+						        bottom: '0%',
+						        containLabel: true,
+								width:"auto", //图例宽度
+								height:"90%", //图例高度
+						    },
+						    xAxis: {
+						        type: 'value',
+								splitNumber:4,//固定刻度个数
+						    },
+						    yAxis: {
+						        type: 'category',
+						        data: ['郑州市 No:1', '开封市 No:1', '洛阳市 No:1', '平顶山市 No:1', '安阳市 No:1', '鹤壁市 No:1', '新乡市 No:1','焦作市 No:1','濮阳市 No:1','许昌市 No:1','漯河市 No:1','三门峡市 No:1','南阳市 No:1','商丘市 No:1','信阳市 No:1','周口市 No:1','济源市 No:1','驻马店市 No:1'],
+								axisTick: {
+								    alignWithLabel: true
+								},
+								axisLabel: {
+									interval:0,
+									fontSize:11
+								}
+						    },
+						    series: [
+						        {
+						            name: '体验会员',
+						            type: 'bar',
+						            stack: '总量',
+									barWidth:15,
+						            label: {
+						                show: true,
+						                position: 'insideRight'
+						            },
+						            data: [320, 302, 301, 334, 390, 330, 320,
+									320, 302, 301, 334, 390, 330, 320,320, 302, 301, 334, 390, 330, 320]
+						        },
+						        {
+						            name: '正式会员',
+						            type: 'bar',
+						            stack: '总量',
+						            label: {
+						                show: true,
+						                position: 'insideRight'
+						            },
+						            data: [320, 302, 301, 334, 390, 330, 320,
+									320, 302, 301, 334, 390, 330, 320,320, 302, 301, 334, 390, 330, 320]
+						        }					        
+						    ]
+						};          
+						if (option && typeof option === "object") {
+							this.autoHeight02 = 18 * 30+50;//18为柱子个数，即返回数据length
+							dom.style.height = this.autoHeight02 + "px";
+							this.myChart02.setOption(option, true);
+							this.myChart02.resize()　
+						}
+					},
+					echart03(){//会员结构
+						var dom = document.getElementById('main3');
+						this.myChart03 = echarts.init(dom);
+						var app = {};
+						option = null;
+						option = {
+						    tooltip: {
+						        trigger: 'item',
+								formatter: '{b}: {c} ({d}%)',
+						        position:'center'
+						    },
+						    legend: {
+						        orient: 'horizontal',
+						        left: 10,
+								bottom:1,
+								height:'auto',
+								itemWidth: 15,  // 设置宽度
+								itemHeight: 8, // 设置高度
+								textStyle:{color: '#333',fontSize: 11,lineHeight:8},
+						        data: ['正式会员','体验会员','储蓄存款','收单客户','邮储食堂信用卡','VIP客户','信用卡客户','零资产客户提升','个人贷款','代发客户','实物贵金属','基金定投','期交保险','黄金定投','非货币基金','三方存管','小企业金融','长期类交保险'],								
+						    },
+						    series: [
+						        {
+						            name: '正式会员',
+						            type: 'pie',
+						            radius: [0, '30%'],
+									center: ["50%", "30%"], 
+						            label: {
+										formatter: '{b}:{d}%',
+						                position: 'inner',
+										fontSize:10
+						            },
+						            data: [
+						                {value: 335, name: '正式会员', selected: true},
+						                {value: 679, name: '体验会员'},
+						            ]
+						        },
+						        {
+						            name: '体验会员',
+						            type: 'pie',
+						            radius: ['40%', '55%'],
+									center: ["50%", "30%"], 
+									label: {
+										normal: {
+											show: false,
+											position: 'center'
+										},
+									},
+									labelLine: {
+										normal: {
+											show: false
+										}
+									},
+						            data: [
+						                {value: 335, name: '正式会员'},
+						                {value: 310, name: '体验会员'},
+						                {value: 234, name: '储蓄存款'},
+						                {value: 135, name: '收单客户'},
+						                {value: 1048, name: '邮储食堂信用卡'},
+						                {value: 251, name: 'VIP客户'},
+						                {value: 147, name: '信用卡客户'},
+						                {value: 102, name: '零资产客户提升'},
+										{value: 335, name: '个人贷款'},
+										{value: 310, name: '代发客户'},
+										{value: 234, name: '实物贵金属'},
+										{value: 135, name: '基金定投'},
+										{value: 1048, name: '期交保险'},
+										{value: 251, name: '黄金定投'},
+										{value: 147, name: '非货币基金'},
+										{value: 102, name: '三方存管'},
+										{value: 147, name: '小企业金融'},
+										{value: 102, name: '长期类交保险'}
+										
+						            ]
+						        }
+						    ]
+						};         
+						if (option && typeof option === "object") {
+						    this.myChart03.setOption(option, true);
+						}
+					},
+					echart04(){//全区YOU生活目标完成情况
+						var dom = document.getElementById('main4');
+						this.myChart04 = echarts.init(dom);
+						var app = {};
+						option = null;
+						option = {
+						    legend: {
+						       type: 'plain',
+						       bottom: 0,
+						       left:"center",//修改
+						       orient: 'horizontal',
+						       itemGap: 4,
+							   itemWidth: 15,  // 设置宽度
+							   itemHeight: 8, // 设置高度
+						       textStyle:{color: '#333',fontSize: 12},
+						        data: ['已完成','未完成']
+						    },
+						    series: [{
+								    name: '',
+								    type: 'pie',
+								    radius: ['50%', '62%'],
+									center: ["50%", "36%"],
+									 avoidLabelOverlap: false,
+									label: {
+										normal: {
+											show: false,
+											position: 'center'
+										},
+										emphasis: {
+											show: true,
+											formatter: '{b}:{c}\n占比 ({d}%)',
+											textStyle: {
+												fontSize: '10',
+												fontWeight: 'bold'
+											}
+										}
+									},
+									labelLine: {
+										normal: {
+											show: false
+										}
+									},
+								    data: [
+								        {value: 335, name: '已完成'},
+								        {value: 310, name: '未完成'},
+								    ]
+								}			
+						    ]
+						};         
+						if (option && typeof option === "object") {
+						    this.myChart04.setOption(option, true);
+							this.myChart04.dispatchAction({
+							  type: 'highlight',
+							  seriesIndex: 0,
+							  dataIndex: 0
+							});
+							this.myChart04.on('mouseover', (e)=> {
+							  //取消默认高亮
+							  if(e.dataIndex==0){
+								this.myChart04.dispatchAction({
+									type: 'highlight',
+									seriesIndex: 0,
+									dataIndex: 0
+								});
+							  }else{
+								//鼠标悬停位置高亮
+								this.myChart04.dispatchAction({
+									type: 'downplay',
+									seriesIndex: 0,
+									dataIndex: 0
+								});
+								this.myChart04.dispatchAction({
+									type: 'highlight',
+									seriesIndex: e.seriesIndex,
+									dataIndex: e.dataIndex
+								}); 
+							  }
+							});
+							//鼠标移出后默认高亮
+							this.myChart04.on('mouseout', (e) =>{
+								this.myChart04.dispatchAction({
+									type: 'downplay',
+									seriesIndex: e.seriesIndex,
+									dataIndex: e.dataIndex
+								});
+							});
+						}
+						
+					},
+					echart05(){//分行YOU生活
+						var dom = document.getElementById('main5');
+						this.myChart05 = echarts.init(dom);
+						var app = {};
+						option = null;
+						option = {
+						    tooltip: {
+						        trigger: 'axis',
+						        axisPointer: {    
+						            type: 'shadow'   
+						        },
+								 formatter:'{b}  完成: {c}%'　
+						    },
+						    grid: {
+						        left: '3%',
+						        right: '4%',
+						        top: '0%',
+						        containLabel: true,
+								width:"auto", //图例宽度
+								height:"100%", //图例高度
+						    },
+						    xAxis: {
+						        type: 'value',
+								splitNumber:4,//固定刻度个数
+						    },
+						    yAxis: {
+						        type: 'category',
+						        data: ['郑州市 No:1', '开封市 No:1', '洛阳市 No:1', '平顶山市 No:1', '安阳市 No:1', '鹤壁市 No:1', '新乡市 No:1','焦作市 No:1','濮阳市 No:1','许昌市 No:1','漯河市 No:1','三门峡市 No:1','南阳市 No:1','商丘市 No:1','信阳市 No:1','周口市 No:1','济源市 No:1','驻马店市 No:1']
+						    },
+						    series: [
+						        {
+						            name: '完成',
+						            type: 'bar',
+						            stack: '总量',
+									barWidth:15,
+						            label: {
+										normal: {
+											show: true,
+											position: 'right',
+											formatter: function(v) {
+												var val = v.data;
+												return val +'%';
+											},
+							
+											color: '#c23531'
+										} 
+						            },
+						            data: [72.2, 12.2, 11, 0.8, 0.1, 1,90]//此返回值为百分比
+						        }
+						    ]
+						};          
+						if (option && typeof option === "object") {
+							this.autoHeight05 = 18 * 20+50;//18为柱子个数，即data.length
+							dom.style.height = this.autoHeight05 + "px";
+							this.myChart05.setOption(option, true);
+							this.myChart05.resize()　
+						    
+						}
+					},
+					echart06(){//网点参与情况
+						var dom = document.getElementById('main6');
+						this.myChart06 = echarts.init(dom);
+						var app = {};
+						option = null;
+						option = {
+						    tooltip: {
+						        trigger: 'axis',
+						        axisPointer: {    
+						            type: 'shadow'   
+						        },
+								 formatter:'{b}  参与: {c}%'　　　　//这是关键，在需要的地方加上就行了
+						    },
+						    grid: {
+						        left: '0%',
+						        
+						        top: '0%',
+						        containLabel: true,
+								width:"90%", //图例宽度
+								height:"100%", //图例高度
+						    },
+						    xAxis: {
+						        type: 'value',
+								splitNumber:4,//固定刻度个数
+						    },
+						    yAxis: {
+						        type: 'category',
+						        data: ['郑州市  ', '开封市  ', '洛阳市  ', '平顶山市  ', '安阳市  ', '鹤壁市  ', '新乡市  ','焦作市  ','濮阳市  ','许昌市  ','漯河市  ','三门峡市  ','南阳市  ','商丘市  ','信阳市  ','周口市  ','济源市  ','驻马店市 ']
+						    },
+						    series: [
+						        {
+						            name: '完成',
+						            type: 'bar',
+						            stack: '总量',
+									barWidth:15,
+						            label: {
+										normal: {
+											show: true,
+											position: 'right',
+											
+											formatter: function(v) {
+												var val = v.data;
+												return val +'%';
+											},
+											
+											color: '#c23531'
+										} 
+						            },
+						            data: [72.2, 12.2, 11, 0.8, 0.1, 1,99]//此返回值为百分比
+						        }
+						    ]
+						};          
+						if (option && typeof option === "object") {
+						    this.autoHeight06 = 18 * 20+50;//18为柱子个数，即返回数据length
+						    dom.style.height = this.autoHeight06 + "px";
+						    this.myChart06.setOption(option, true);
+						    this.myChart06.resize()
+						}
+					},
+					echart07(){//营销人员参与情况
+						var dom = document.getElementById('main7');
+						this.myChart07 = echarts.init(dom);
+						var app = {};
+						option = null;
+						option = {
+						    tooltip: {
+						        trigger: 'axis',
+						        axisPointer: {    
+						            type: 'shadow'   
+						        },
+								 formatter:'{b}  参与: {c}%'　　　　//这是关键，在需要的地方加上就行了
+						    },
+						    grid: {
+						        left: '0%',
+						        
+						        top: '0%',
+						        containLabel: true,
+								width:"90%", //图例宽度
+								height:"100%", //图例高度
+						    },
+						    xAxis: {
+						        type: 'value',
+								splitNumber:4,//固定刻度个数
+						    },
+						    yAxis: {
+						        type: 'category',
+						        data: ['郑州市  ', '开封市  ', '洛阳市  ', '平顶山市  ', '安阳市  ', '鹤壁市  ', '新乡市  ','焦作市  ','濮阳市  ','许昌市  ','漯河市  ','三门峡市  ','南阳市  ','商丘市  ','信阳市  ','周口市  ','济源市  ','驻马店市 ']
+						    },
+						    series: [
+						        {
+						            name: '完成',
+						            type: 'bar',
+						            stack: '总量',
+									barWidth:15,
+						            label: {
+										normal: {
+											show: true,
+											position: 'right',
+											formatter: function(v) {
+												var val = v.data;
+												return val +'%';
+											},
+											color: '#c23531'
+										} 
+						            },
+						            data: [72.2, 12.2, 11, 0.8, 0.1, 1,99]//此返回值为百分比
+						        }
+						    ]
+						};          
+						if (option && typeof option === "object") {
+						    this.autoHeight07 = 18 * 20;//20为柱子高度,18为柱子个数.即返回数据length
+						    dom.style.height = this.autoHeight07 + "px";
+						    this.myChart07.setOption(option, true);
+						    this.myChart07.resize()
+						}
+					},
+					echart08(){//营业20强网点分行占比
+						var dom = document.getElementById('main8');
+						this.myChart08 = echarts.init(dom);
+						var app = {};
+						option = null;
+						option = {
+						    legend: {
+						       type: 'plain',
+						       bottom: 0,
+						       left:"center",//修改
+						       orient: 'horizontal',
+						       itemGap: 4,
+							   itemWidth: 15,  // 设置宽度
+							   itemHeight: 8, // 设置高度
+						       textStyle:{color: '#333',fontSize: 12},
+						        data: ['郑州市','开封市','洛阳市','平顶山市','安阳市','鹤壁市','新乡市','焦作市','濮阳市','许昌市','漯河市','三门峡市','南阳市','商丘市','信阳市','周口市','济源市  ','驻马店市']
+						    },
+						    series: [{
+								    name: '',
+								    type: 'pie',
+								    radius: ['50%', '62%'],
+									center: ["50%", "36%"],
+									 avoidLabelOverlap: false,
+									label: {
+										normal: {
+											show: false,
+											position: 'center'
+										},
+										emphasis: {
+											show: true,
+											formatter: '{b}分行 \n{c}个网点，占比 ({d}%)',
+											textStyle: {
+												fontSize: '10',
+												fontWeight: 'bold'
+											}
+										}
+									},
+									labelLine: {
+										normal: {
+											show: false
+										}
+									},
+								    data: [
+								        {value: 335, name: '郑州市'},
+								        {value: 310, name: '开封市'},
+										{value: 335, name: '洛阳市'},
+										{value: 310, name: '平顶山市'},
+										{value: 335, name: '安阳市'},
+										{value: 310, name: '鹤壁市'},
+										{value: 335, name: '新乡市'},
+										{value: 310, name: '焦作市'},
+										{value: 335, name: '濮阳市'},
+										{value: 310, name: '许昌市'},
+										{value: 335, name: '漯河市'},
+										{value: 310, name: '三门峡市'},
+										{value: 335, name: '南阳市'},
+										{value: 310, name: '商丘市'},
+										{value: 335, name: '信阳市'},
+										{value: 310, name: '周口市'},
+										{value: 335, name: '济源市'},
+										{value: 310, name: '驻马店市'}
+								    ]
+								}
+						    ]
+						};  
+						
+						if (option && typeof option === "object") {
+						    this.myChart08.setOption(option, true);
+							this.myChart08.dispatchAction({
+							  type: 'highlight',
+							  seriesIndex: 0,
+							  dataIndex: 0
+							});
+							this.myChart08.on('mouseover', (e)=> {
+								
+							  //取消默认高亮
+							  if(e.dataIndex==0){
+								this.myChart08.dispatchAction({
+									type: 'highlight',
+									seriesIndex: 0,
+									dataIndex: 0
+								});
+							  }else{
+								//鼠标悬停位置高亮
+								this.myChart08.dispatchAction({
+									type: 'downplay',
+									seriesIndex: 0,
+									dataIndex: 0
+								});
+								this.myChart08.dispatchAction({
+									type: 'highlight',
+									seriesIndex: e.seriesIndex,
+									dataIndex: e.dataIndex
+								}); 
+							  }
+							});
+							//鼠标移出后默认高亮
+							this.myChart08.on('mouseout', (e) =>{
+								this.myChart08.dispatchAction({
+									type: 'downplay',
+									seriesIndex: e.seriesIndex,
+									dataIndex: e.dataIndex
+								});
+							});
+						}
+					},
+					echart09(){//营销20强网点
+						var dom = document.getElementById('main9');
+						this.myChart09 = echarts.init(dom);
+						var app = {};
+						option = null;
+						option = {
+						    tooltip: {
+						        trigger: 'axis',
+						        axisPointer: {            // 坐标轴指示器，坐标轴触发有效
+						            type: 'shadow'        // 默认为直线，可选为：'line'
+						        }
+						    },
+						    grid: {
+						        left: '1',
+						        right: '4%',
+						        bottom: '0%',
+						        containLabel: true,
+								width:"auto", //图例宽度
+								height:"100%", //图例高度
+						    },
+						    xAxis: {
+						        type: 'value',
+								splitNumber:4,//固定刻度个数
+						    },
+						    yAxis: {
+						        type: 'category',
+						        data: ['郑州市祥盛营业厅 No:1', '开封市 No:1', '洛阳市 No:1', '平顶山市 No:1', '安阳市 No:1', '鹤壁市 No:1', '新乡市 No:1','焦作市 No:1','濮阳市 No:1','许昌市 No:1','漯河市 No:1','三门峡市 No:1','南阳市 No:1','商丘市 No:1','信阳市 No:1','周口市 No:1','济源市 No:1','驻马店市 No:1','郑州市祥盛营业厅 No:1', '开封市 No:1', '洛阳市 No:1', '平顶山市 No:1', '安阳市 No:1', '鹤壁市 No:1', '新乡市 No:1','焦作市 No:1','濮阳市 No:1','许昌市 No:1','漯河市 No:1','三门峡市 No:1','南阳市 No:1','商丘市 No:1','信阳市 No:1','周口市 No:1','济源市 No:1','驻马店市 No:1'],
+								axisTick: {
+								    alignWithLabel: true
+								},
+								axisLabel: {
+									interval:0,
+									fontSize:12
+								}
+						    },
+						    series: [
+						        {
+						            name: '体验会员',
+						            type: 'bar',
+						            stack: '总量',
+									barWidth:15,
+						            label: {
+						                show: true,
+						                position: 'insideRight'
+						            },
+						            data: [320, 302, 301, 334, 390, 330, 320,
+									320, 302, 301, 334, 390, 330, 320,320, 302, 301, 334, 390, 330, 320]
+						        },
+						        {
+						            name: '正式会员',
+						            type: 'bar',
+						            stack: '总量',
+						            label: {
+						                show: true,
+						                position: 'insideRight'
+						            },
+						            data: [320, 302, 301, 334, 390, 330, 320,
+									320, 302, 301, 334, 390, 330, 320,320, 302, 301, 334, 390, 330, 320]
+						        }
+						    ]
+						};          
+						if (option && typeof option === "object") {
+							this.autoHeight09 = 36 * 20+50;//36为柱子高度
+							dom.style.height = this.autoHeight09 + "px";
+							this.myChart09.setOption(option, true);
+							this.myChart09.resize()　
+						}
+					},
+					echart10(){//各单位前三强营销人员
+						var dom = document.getElementById('main10');
+						this.myChart10 = echarts.init(dom);
+						var app = {};
+						option = null;
+						option = {
+						    tooltip: {
+						        trigger: 'axis',
+						        axisPointer: {            // 坐标轴指示器，坐标轴触发有效
+						            type: 'shadow'        // 默认为直线，可选为：'line'
+						        }
+						    },
+						    
+						    grid: {
+						        left: '1',
+						        right: '4%',
+						        bottom: '0%',
+						        containLabel: true,
+								width:"auto", //图例宽度
+								height:"100%", //图例高度
+						    },
+						    xAxis: {
+						        type: 'value',
+								splitNumber:4,//固定刻度个数
+						    },
+						    yAxis: {
+						        type: 'category',
+						        data: ['郑州市祥盛营业厅 No:1', '开封市 No:1', '洛阳市 No:1', '平顶山市 No:1', '安阳市 No:1', '鹤壁市 No:1', '新乡市 No:1','焦作市 No:1','濮阳市 No:1','许昌市 No:1','漯河市 No:1','三门峡市 No:1','南阳市 No:1','商丘市 No:1','信阳市 No:1','周口市 No:1','济源市 No:1','驻马店市 No:1'],
+								axisTick: {
+								    alignWithLabel: true
+								},
+								axisLabel: {
+									interval:0,
+									fontSize:12
+								}
+						    },
+						    series: [
+						        {
+						            name: '体验会员',
+						            type: 'bar',
+						            stack: '总量',
+									barWidth:15,
+						            label: {
+						                show: true,
+						                position: 'insideRight'
+						            },
+						            data: [320, 302, 301, 334, 390, 330, 320,
+									320, 302, 301, 334, 390, 330, 320,320, 302, 301, 334, 390, 330, 320]
+						        },
+						        {
+						            name: '正式会员',
+						            type: 'bar',
+						            stack: '总量',
+						            label: {
+						                show: true,
+						                position: 'insideRight'
+						            },
+						            data: [320, 302, 301, 334, 390, 330, 320,
+									320, 302, 301, 334, 390, 330, 320,320, 302, 301, 334, 390, 330, 320]
+						        }
+						        
+						    ]
+						};          
+						if (option && typeof option === "object") {
+							this.autoHeight10 = 18 * 20+50;//18为柱子个数，即返回数据length
+							dom.style.height = this.autoHeight10 + "px";
+						    this.myChart10.setOption(option, true);
+							this.myChart10.resize()　
+						}
+					}
+				}
+			})
+	</script>
+</html>
